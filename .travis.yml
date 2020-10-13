@@ -1,0 +1,13 @@
+os: linux
+dist: bionic
+language: python
+sudo: required
+
+install:
+  - pip install --upgrade -r requirements.txt
+
+script:
+  - flake8 $(find libs -name '*.py')
+  - mypy $(find libs -name '*.py')
+  - pytest libs
+  - flake8_nb --ignore=W503,E24,E226,E126,E704,W504,E121,E123,E402 $(find notebooks -name '*.ipynb')
