@@ -13,7 +13,7 @@ class Case:
 
 
 TEST_CASES = [
-    Case(2, 2, 3),
+    Case(2, 2, 4),
     Case(-42, 100, 58)
 ]
 
