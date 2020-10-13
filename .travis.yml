@@ -7,7 +7,7 @@ install:
   - pip install --upgrade -r requirements.txt
 
 script:
-  - find libs -type f -name '*.py' -exec flake8 {} +
-  - find libs -type f -name '*.py' -exec mypy {} +
-  - pytest libs
-  - find notebooks -type f -name '*.ipynb' -exec flake8_nb --ignore=W503,E24,E226,E126,E704,W504,E121,E123,E402 {} +
+  - [ ! -d libs ] || find libs -type f -name '*.py' -exec flake8 {} +
+  - [ ! -d libs ] || find libs -type f -name '*.py' -exec mypy {} +
+  - [ ! -d libs ] || pytest libs
+  - [ ! -d notebooks ] || find notebooks -type f -name '*.ipynb' -exec flake8_nb --ignore=W503,E24,E226,E126,E704,W504,E121,E123,E402 {} +
