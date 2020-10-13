@@ -1,5 +1,3 @@
-import sys
-
 from .some_local_code import some_useful_function
 
 
