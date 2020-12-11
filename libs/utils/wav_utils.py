@@ -38,7 +38,7 @@ def slice_wav(wav_path: str, output_prefix_path: str, duration: float) -> None:
         wav.write(output_prefix_path[:-4] + str(slice_index) + ".wav", rate, wav_slice)
 
 
-def resample_wav(wav_path: str, rate: int, result_path: str) -> None:
+def resample_wav(wav_path: str, result_path: str, rate: int) -> None:
     amplitudes, rate = librosa.load(wav_path, sr=rate)
     wav.write(result_path, rate, amplitudes)
 
@@ -127,7 +127,7 @@ def main() -> None:
     elif args.which == "slice":
         slice_wav(args.input, args.output, args.duration)
     elif args.which == "resample":
-        resample_wav(args.input, args.rate, args.output)
+        resample_wav(args.input, args.output, args.rate)
     elif args.which == "split_channels":
         split_channels(args.input, args.left, args.right)
     elif args.which == "join_channels":
