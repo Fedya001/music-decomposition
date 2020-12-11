@@ -39,8 +39,8 @@ def slice_wav(wav_path: str, output_prefix_path: str, duration: float) -> int:
     return len(range(0, len(amplitudes), slice_len))
 
 
-def resample_wav(wav_path: str, result_path: str, rate: int) -> None:
-    amplitudes, rate = librosa.load(wav_path, sr=rate)
+def resample_wav(wav_path: str, result_path: str, rate: int, mono: bool = False) -> None:
+    amplitudes, rate = librosa.load(wav_path, sr=rate, mono=mono)
     wav.write(result_path, rate, amplitudes)
 
 
@@ -99,6 +99,7 @@ def main() -> None:
     resample_mode.add_argument("-i", "--input", required=True, help="Input wav path")
     resample_mode.add_argument("-r", "--rate", required=True, type=int, help="New rate")
     resample_mode.add_argument("-o", "--output", required=True, help="Output resampled wav path")
+    resample_mode.add_argument("--mono", action="store_true", help="Output resampled wav path")
     resample_mode.set_defaults(which="resample")
 
     split_channels_mode = subparsers.add_parser("split_channels", help="Split stereo into left ans right monos")
@@ -128,7 +129,7 @@ def main() -> None:
     elif args.which == "slice":
         slice_wav(args.input, args.output, args.duration)
     elif args.which == "resample":
-        resample_wav(args.input, args.output, args.rate)
+        resample_wav(args.input, args.output, args.rate, args.mono)
     elif args.which == "split_channels":
         split_channels(args.input, args.left, args.right)
     elif args.which == "join_channels":
