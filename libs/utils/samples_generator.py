@@ -20,7 +20,7 @@ def generate_sample(input_path: str, output_path: str, rate: int, duration: floa
     os.replace(output_path[:-4] + str(slice_index) + ".wav", output_path)
 
     # TODO: Remove file names: left.wav, right.wav, tmp.npy,
-    # cuz we don't have any gurantee, that we won't have collisons
+    # cuz we don't have any gurantee, that we won't have collisions
     wav_utils.split_channels(output_path, "left.wav", "right.wav")
     wav_utils.resample_wav("left.wav", output_path, rate)
     os.remove("left.wav")
@@ -34,8 +34,8 @@ def _generate_samples(input_path: str, output_path: str, size: int, rate: int, d
     dsd_dir = "Dev" if set_name == "train" else "Test"
     bounds: tp.Tuple[int, int] = (51, 100) if set_name == "train" else (1, 50)
 
-    mixtures_path = Path(input_path) / "Mixtures" / dsd_dir
-    sources_path = Path(input_path) / "Sources" / dsd_dir
+    mixtures_path: Path = Path(input_path) / "Mixtures" / dsd_dir
+    sources_path: Path = Path(input_path) / "Sources" / dsd_dir
 
     target_path: Path = Path(output_path) / set_name
     target_path.mkdir(exist_ok=True)
