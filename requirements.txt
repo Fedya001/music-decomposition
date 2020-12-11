@@ -1,6 +1,7 @@
 flake8==3.8.3
 flake8-nb==0.2.5
 dataclasses==0.7
+librosa==0.8.0
 matplotlib==3.2.2
 mypy==0.782
 numpy==1.18.5
@@ -8,3 +9,4 @@ pandas==1.1.2
 pytest==3.6.4
 scipy==1.4.1
 scikit-learn==0.22.2.post1
+stft==0.5.2
