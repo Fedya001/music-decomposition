@@ -30,12 +30,13 @@ def convert_spectrogram_to_wav(module_path: str, phase_path: str, rate: int, wav
     wav.write(wav_path, rate, amplitudes.astype("int16"))
 
 
-def slice_wav(wav_path: str, output_prefix_path: str, duration: float) -> None:
+def slice_wav(wav_path: str, output_prefix_path: str, duration: float) -> int:
     rate, amplitudes = wav.read(wav_path)
     slice_len = int(rate * duration)
     for slice_index, sample_index in enumerate(range(0, len(amplitudes), slice_len)):
         wav_slice = amplitudes[sample_index:sample_index + slice_len]
         wav.write(output_prefix_path[:-4] + str(slice_index) + ".wav", rate, wav_slice)
+    return len(range(0, len(amplitudes), slice_len))
 
 
 def resample_wav(wav_path: str, result_path: str, rate: int) -> None:
