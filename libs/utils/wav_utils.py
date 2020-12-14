@@ -39,6 +39,13 @@ def slice_wav(wav_path: str, output_prefix_path: str, duration: float) -> int:
     return len(range(0, len(amplitudes), slice_len))
 
 
+def cut_wav(wav_path: str, output_path: str, from_timepoint: float, to_timepoint: float) -> None:
+    rate, amplitudes = wav.read(wav_path)
+    from_index = int(rate * from_timepoint)
+    to_index = int(rate * to_timepoint)
+    wav.write(output_path, rate, amplitudes[from_index:to_index])
+
+
 def resample_wav(wav_path: str, result_path: str, rate: int, mono: bool = False) -> None:
     amplitudes, rate = librosa.load(wav_path, sr=rate, mono=mono)
     wav.write(result_path, rate, amplitudes)
@@ -120,6 +127,13 @@ def main() -> None:
     visualize_mod.add_argument("-r", "--rate", required=True, type=int, help="wav rate of this spectrogram")
     visualize_mod.set_defaults(which="visualize")
 
+    cut_mod = subparsers.add_parser("cut", help="Cut track")
+    cut_mod.add_argument("-i", "--input", required=True, help="Input wav to cut")
+    cut_mod.add_argument("-o", "--output", required=True, help="Output cut wav")
+    cut_mod.add_argument("--from_time", required=True, type=int, help="Start timepoint (sec)")
+    cut_mod.add_argument("--to_time", required=True, type=int, help="End timepoint (sec)")
+    cut_mod.set_defaults(which="cut")
+
     args = arg_parser.parse_args()
 
     if args.which == "wtos":
@@ -136,6 +150,8 @@ def main() -> None:
         join_channels(args.left, args.right, args.output)
     elif args.which == "visualize":
         display_spectrogram(args.module, args.png, args.rate)
+    elif args.which == "cut":
+        cut_wav(args.input, args.output, args.from_time, args.to_time)
     else:
         raise ValueError("Unsupported action")
 
