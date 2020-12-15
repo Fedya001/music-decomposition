@@ -85,7 +85,7 @@ def join_wavs(wav_paths: tp.List[str], output_path: str) -> None:
         rate, amplitudes = wav.read(wav_path)
         if joined_rate is None:
             joined_rate = rate
-        assert joined_rate == rate, "All joining track must have the same rate"
+        assert joined_rate == rate, "All joining tracks must have the same rate"
 
         if joined_amplitudes is None:
             joined_amplitudes = amplitudes
