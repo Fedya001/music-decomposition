@@ -5,6 +5,7 @@ import librosa
 import librosa.display
 import matplotlib.pyplot as plt
 import numpy as np
+import typing as tp
 import scipy.io.wavfile as wav
 
 
@@ -69,6 +70,30 @@ def display_spectrogram(module_path: str, png_path: str, rate: int) -> None:
     plt.savefig(png_path)
 
 
+def cut_wav(wav_path: str, output_path: str, from_timepoint: float, to_timepoint: float) -> None:
+    rate, amplitudes = wav.read(wav_path)
+    from_index = int(rate * from_timepoint)
+    to_index = int(rate * to_timepoint)
+    wav.write(output_path, rate, amplitudes[from_index:to_index])
+
+
+def join_wavs(wav_paths: tp.List[str], output_path: str) -> None:
+    joined_amplitudes: tp.Optional[tp.Sequence[int]] = None
+    joined_rate: tp.Optional[int] = None
+
+    for wav_path in wav_paths:
+        rate, amplitudes = wav.read(wav_path)
+        if joined_rate is None:
+            joined_rate = rate
+        assert joined_rate == rate, "All joining tracks must have the same rate"
+
+        if joined_amplitudes is None:
+            joined_amplitudes = amplitudes
+        else:
+            joined_amplitudes = np.vstack((joined_amplitudes, amplitudes))
+    wav.write(output_path, joined_rate, joined_amplitudes)
+
+
 def main() -> None:
     arg_parser = ArgumentParser(prog="wav/spectro utility",
                                 description="Convert wav to spectrogram and vice versa, slice & resample wavs,"
@@ -120,6 +145,18 @@ def main() -> None:
     visualize_mod.add_argument("-r", "--rate", required=True, type=int, help="wav rate of this spectrogram")
     visualize_mod.set_defaults(which="visualize")
 
+    cut_mod = subparsers.add_parser("cut", help="Cut track")
+    cut_mod.add_argument("-i", "--input", required=True, help="Input wav to cut")
+    cut_mod.add_argument("-o", "--output", required=True, help="Output cut wav")
+    cut_mod.add_argument("--from_time", required=True, type=int, help="Start timepoint (sec)")
+    cut_mod.add_argument("--to_time", required=True, type=int, help="End timepoint (sec)")
+    cut_mod.set_defaults(which="cut")
+
+    join_mod = subparsers.add_parser("join", help="Join wavs")
+    join_mod.add_argument("-i", "--input", action="append", required=True, help="List of wavs to join")
+    join_mod.add_argument("-o", "--output", required=True, help="Output joined wav")
+    join_mod.set_defaults(which="join")
+
     args = arg_parser.parse_args()
 
     if args.which == "wtos":
@@ -136,6 +173,10 @@ def main() -> None:
         join_channels(args.left, args.right, args.output)
     elif args.which == "visualize":
         display_spectrogram(args.module, args.png, args.rate)
+    elif args.which == "cut":
+        cut_wav(args.input, args.output, args.from_time, args.to_time)
+    elif args.which == "join":
+        join_wavs(args.input, args.output)
     else:
         raise ValueError("Unsupported action")
 
