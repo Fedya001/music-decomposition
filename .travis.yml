@@ -10,4 +10,4 @@ script:
   - if [ -d libs ]; then find libs -type f -name '*.py' -exec flake8 {} +; else true; fi
   - if [ -d libs ]; then find libs -type f -name '*.py' -exec mypy {} +; else true; fi
   - if [ -d libs ]; then pytest libs; else true; fi
-  - if [ -d notebooks ]; then find notebooks -type f -name '*.ipynb' -exec flake8_nb --ignore=W503,E24,E226,E126,E704,W504,E121,E123,E402 {} +; else true; fi
+"  - if [ -d notebooks ]; then find notebooks -type f -name '*.ipynb' -exec flake8_nb --ignore=W503,E24,E226,E126,E704,W504,E121,E123,E402 {} +; else true; fi
