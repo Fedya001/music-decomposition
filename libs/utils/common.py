@@ -11,10 +11,9 @@ def crop_matrix(matrix: np.ndarray, height: int, width: int) -> np.ndarray:
 
 def padd_matrix(matrix: np.ndarray, height: int, width: int) -> np.ndarray:
     result = np.zeros((height, width))
-    result[:matrix.shape[0],:matrix.shape[1]] = matrix
+    result[:matrix.shape[0], :matrix.shape[1]] = matrix
     return result
 
 
 def fit_matrix_size(matrix: np.ndarray, height: int, width: int) -> np.ndarray:
     return padd_matrix(crop_matrix(matrix, height, width), height, width)
-

@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 import os
+import typing as tp
 
 from tensorflow import keras
 import keras.backend as K
@@ -10,19 +11,19 @@ from common import fit_matrix_size
 import wav_utils
 
 
-def sum_offset(y_true, y_pred):
+def sum_offset(y_true: tp.Any, y_pred: tp.Any) -> tp.Any:
     return K.sum(K.abs(y_pred - y_true))
 
 
-def mean_offset(y_true, y_pred):
+def mean_offset(y_true: tp.Any, y_pred: tp.Any) -> tp.Any:
     return K.mean(K.abs(y_pred - y_true))
 
 
-def max_offset(y_true, y_pred):
+def max_offset(y_true: tp.Any, y_pred: tp.Any) -> tp.Any:
     return K.max(K.abs(y_pred - y_true))
 
 
-def process_slice(path: str, model):
+def process_slice(path: str, model: tp.Any) -> None:
     RATE = 8192
     HEIGHT, WIDTH = 1024, 256
     # TODO: Rewrite cleaner without duplication.
@@ -40,7 +41,7 @@ def process_slice(path: str, model):
 
     tensor = tf.convert_to_tensor(fit_matrix_size(left_module, HEIGHT, WIDTH))
     tensor = tf.reshape(tensor, (-1, HEIGHT, WIDTH))
-    left_module = model.predict(tensor, batch_size=1)[0][:left_module_before_shape[0],:left_module_before_shape[1]]
+    left_module = model.predict(tensor, batch_size=1)[0][:left_module_before_shape[0], :left_module_before_shape[1]]
     np.save("left_module.npy", left_module)
 
     right_module = np.load("right_module.npy")
@@ -48,17 +49,17 @@ def process_slice(path: str, model):
 
     tensor = tf.convert_to_tensor(fit_matrix_size(right_module, HEIGHT, WIDTH))
     tensor = tf.reshape(tensor, (-1, HEIGHT, WIDTH))
-    right_module = model.predict(tensor, batch_size=1)[0][:right_module_before_shape[0],:right_module_before_shape[1]]
+    right_module = model.predict(tensor, batch_size=1)[0][:right_module_before_shape[0], :right_module_before_shape[1]]
     np.save("right_module.npy", right_module)
 
     modules, phases = np.load("left_module.npy"), np.load("left_phase.npy")
-    modules, phases  = fit_matrix_size(modules, HEIGHT, WIDTH), fit_matrix_size(phases, HEIGHT, WIDTH)
+    modules, phases = fit_matrix_size(modules, HEIGHT, WIDTH), fit_matrix_size(phases, HEIGHT, WIDTH)
     np.save("left_module.npy", modules)
     np.save("left_phase.npy", phases)
     wav_utils.convert_spectrogram_to_wav("left_module.npy", "left_phase.npy", RATE, "left.wav")
 
     modules, phases = np.load("right_module.npy"), np.load("right_phase.npy")
-    modules, phases  = fit_matrix_size(modules, HEIGHT, WIDTH), fit_matrix_size(phases, HEIGHT, WIDTH)
+    modules, phases = fit_matrix_size(modules, HEIGHT, WIDTH), fit_matrix_size(phases, HEIGHT, WIDTH)
     np.save("right_module.npy", modules)
     np.save("right_phase.npy", phases)
     wav_utils.convert_spectrogram_to_wav("right_module.npy", "right_phase.npy", RATE, "right.wav")
